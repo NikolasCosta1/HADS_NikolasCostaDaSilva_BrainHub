@@ -1,44 +1,29 @@
-# Contrato da tela de login
+# Autenticação no front
 
-O front **não altera o back end**. Ele consome o endpoint já planejado em `docs/regras-e-rotas.md` do back end:
+Consome o back em `POST /api/auth/login` (público) e `GET /api/me` (protegido).
 
-`POST /api/auth/login` — público, com proteção por tentativas.
+## Login
 
-## Requisição
+Requisição: `{ "email": "...", "senha": "..." }`
 
-```json
-{ "email": "aluno@exemplo.com", "senha": "********" }
-```
+Resposta 200: `{ "token", "token_type", "expires_in": 3600, "usuario": { "id_usuario", "nome", "email", "perfil" } }`
 
-## Resposta de sucesso esperada (200)
+- `perfil` ALUNO → vai para `/aluno`; ADMINISTRADOR → vai para `/admin`.
+- O token é guardado em `sessionStorage` (sai ao fechar a aba) e enviado em `Authorization: Bearer`.
 
-```json
-{
-  "token": "<jwt ou token de sessão>",
-  "usuario": { "id": 1, "nome": "Maria", "perfil": "ALUNO" }
-}
-```
-
-`perfil` deve ser `ALUNO` ou `ADMINISTRADOR` (valores da tabela `usuario`). O token é enviado depois em `Authorization: Bearer <token>`.
-
-> O endpoint ainda não existe. Quando for implementado, se o formato da resposta for diferente, ajuste **apenas** `src/services/auth/authService.js`.
-
-## Erros tratados (campo `message` do JSON é usado quando existir)
+## Erros
 
 | Status | Mensagem exibida |
 | --- | --- |
-| 400 | Mensagem do servidor ou "Dados inválidos…" |
-| 401 | E-mail ou senha incorretos. |
-| 403 | Acesso desativado (`ativo = false`). |
-| 423 | Conta bloqueada após três falhas (`bloqueado_ate`). |
-| 429 | Muitas tentativas. |
-| 5xx / sem rede | Servidor indisponível / sem conexão. |
+| 400 | Mensagem do servidor (ex.: formato de e-mail) |
+| 401 | "E-mail ou senha inválidos, ou conta temporariamente bloqueada." |
+| 429 | Muitas tentativas |
+| 5xx / sem rede | Servidor indisponível / sem conexão |
 
-A mensagem de 401 é propositalmente genérica, para não revelar se o e-mail existe.
+O back responde 401 tanto para senha errada quanto para conta bloqueada ou inativa. Isso é intencional, para não revelar se o e-mail existe.
 
-## Decisões de segurança
+## Sessão
 
-- Não há link de "cadastre-se": administradores e alunos são criados pelo administrador.
-- A sessão fica em `sessionStorage` (termina ao fechar a aba). Se o back end passar a usar cookie `HttpOnly`, remova o armazenamento do token em `AuthContext.jsx`.
-- A senha é limpa do campo após uma tentativa falha.
-- As validações do front são só de conveniência; as oficiais são as do back end.
+- Ao abrir ou recarregar o app, `GET /api/me` confere o token. Se ele for recusado (401), a sessão é encerrada e o usuário vai para o login com o aviso "Sua sessão expirou".
+- Qualquer 401 em uma requisição protegida encerra a sessão da mesma forma.
+- Falha de rede ao verificar a sessão não derruba o login local.

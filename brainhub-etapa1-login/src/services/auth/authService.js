@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { transaction } from '../../config/database.js';
+import { transaction, pool } from '../../config/database.js';
 import { env } from '../../config/env.js';
 import { HttpError } from '../../utils/HttpError.js';
-import { object, email, password } from '../../validators/common.js';
+import { object, email, text, password } from '../../validators/common.js';
 import { hashPassword, verifyPassword } from '../../utils/password.js';
 // Usuário inexistente também executa scrypt para reduzir diferenças de tempo.
 const dummyHash = await hashPassword('dummy-internal-password');
@@ -33,4 +33,11 @@ export async function login(body, ip) {
   if (!result) throw new HttpError(401, 'Credenciais inválidas ou conta temporariamente indisponível.');
   const token = jwt.sign({}, env.jwtSecret, { subject:String(result.id_usuario), algorithm:'HS256', expiresIn:'1h', issuer:'brainhub', audience:'brainhub-web' });
   return { token, token_type:'Bearer', expires_in:3600, usuario:result };
+}
+export async function createUser(body) {
+  const b = object(body);
+  if (!['ALUNO','ADMINISTRADOR'].includes(b.perfil)) throw new HttpError(400, 'Perfil inválido.');
+  const name = text(b.nome,'nome',150), mail = email(b.email), hashed = await hashPassword(password(b.senha));
+  const { rows } = await pool.query('INSERT INTO usuario(nome,email,senha_hash,perfil) VALUES ($1,$2,$3,$4) RETURNING id_usuario,nome,email,perfil,ativo', [name,mail,hashed,b.perfil]);
+  return rows[0];
 }

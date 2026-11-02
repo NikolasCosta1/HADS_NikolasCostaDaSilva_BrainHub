@@ -1,6 +1,6 @@
 import { useAuth } from '../../contexts/AuthContext.jsx';
 
-// Página provisória só para confirmar o redirecionamento após o login. Será substituída.
+// Página provisória da área do administrador (ainda não integrada).
 export default function PlaceholderPage({ titulo }) {
   const { usuario, logout } = useAuth();
   return (

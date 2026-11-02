@@ -36,3 +36,10 @@ Build de produção: `npm run build` (gera `dist/`).
 | docs | Contrato de login e decisões. |
 
 Fluxo: `LoginPage` → `LoginForm` → `AuthContext.login` → `authService.login` → `POST /api/auth/login`. Após sucesso, ADMINISTRADOR vai para `/admin` e ALUNO para `/aluno`.
+
+## Integração com o backend (área do aluno)
+
+- Login: `POST /api/auth/login`, com validação da sessão em `GET /api/me`. Detalhes em `docs/login.md`.
+- Questões (`/aluno/questoes`): lista com filtros de disciplina e assunto (na URL) e paginação de 10 por página. Ao abrir uma questão, o aluno escolhe uma alternativa e recebe o resultado, o gabarito e a explicação. O gabarito só chega depois da resposta.
+- Endpoints usados: `GET /api/disciplinas`, `GET /api/assuntos?id_disciplina=`, `GET /api/questoes`, `GET /api/questoes/:id`, `POST /api/questoes/:id/respostas`.
+- O Vite encaminha `/api` ao backend em desenvolvimento (`VITE_PROXY_TARGET`). Para publicar o front, será preciso um proxy reverso (ou CORS) no servidor de produção.

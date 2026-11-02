@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../components/auth/Logo.jsx';
 import LoginForm from '../../components/auth/LoginForm.jsx';
-import { useAuth } from '../../contexts/AuthContext.jsx';
+import { useAuth, CHAVE_AVISO } from '../../contexts/AuthContext.jsx';
 import { homeDoPerfil } from '../../routes/rotasPorPerfil.js';
 import './LoginPage.css';
 
@@ -9,6 +10,13 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { state } = useLocation();
+  // Aviso deixado pelo app (ex.: sessão expirada). Lido na montagem e apagado logo depois.
+  const [aviso] = useState(() => {
+    try { return sessionStorage.getItem(CHAVE_AVISO); } catch { return null; }
+  });
+  useEffect(() => {
+    try { sessionStorage.removeItem(CHAVE_AVISO); } catch { /* ignora */ }
+  }, []);
 
   const entrar = async (credenciais) => {
     const usuario = await login(credenciais);
@@ -36,6 +44,7 @@ export default function LoginPage() {
           <div className="mobile-logo"><Logo size={36} /><span>BrainHub</span></div>
           <h1>Bem-vindo de volta</h1>
           <p className="subtitle">Entre com seu e-mail e senha para continuar.</p>
+          {aviso && <div className="alert" role="status">{aviso}</div>}
           <LoginForm onSubmit={entrar} />
           <p className="help">Não tem acesso? Solicite o cadastro ao administrador.</p>
         </div>
