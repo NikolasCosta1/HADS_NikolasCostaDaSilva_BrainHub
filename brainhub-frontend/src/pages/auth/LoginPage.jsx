@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../components/auth/Logo.jsx';
 import LoginForm from '../../components/auth/LoginForm.jsx';
 import { useAuth, CHAVE_AVISO } from '../../contexts/AuthContext.jsx';
@@ -46,7 +46,7 @@ export default function LoginPage() {
           <p className="subtitle">Entre com seu e-mail e senha para continuar.</p>
           {aviso && <div className="alert" role="status">{aviso}</div>}
           <LoginForm onSubmit={entrar} />
-          <p className="help">Não tem acesso? Solicite o cadastro ao administrador.</p>
+          <p className="help">Não tem conta? <Link to="/cadastro">Criar conta</Link></p>
         </div>
       </main>
     </div>

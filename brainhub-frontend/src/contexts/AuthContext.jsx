@@ -60,6 +60,14 @@ export function AuthProvider({ children }) {
     return nova.usuario;
   }, []);
 
+  // Usado pelo cadastro: o POST /auth/register já devolve token + usuário,
+  // então não faz sentido chamar login de novo.
+  const entrarComSessao = useCallback((nova) => {
+    gravarSessao(nova);
+    setSessao(nova);
+    return nova.usuario;
+  }, []);
+
   const logout = useCallback(() => encerrar(), [encerrar]);
 
   const value = useMemo(() => ({
@@ -67,8 +75,9 @@ export function AuthProvider({ children }) {
     autenticado: !!sessao?.token,
     verificando,
     login,
+    entrarComSessao,
     logout,
-  }), [sessao, verificando, login, logout]);
+  }), [sessao, verificando, login, entrarComSessao, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

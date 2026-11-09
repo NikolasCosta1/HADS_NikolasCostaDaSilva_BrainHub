@@ -13,6 +13,8 @@ export default function AlunoLayout() {
         </div>
         <nav aria-label="Principal">
           <NavLink to="/aluno/questoes">Questões</NavLink>
+          <NavLink to="/aluno/desempenho">Desempenho</NavLink>
+          <NavLink to="/aluno/sessoes">Sessões de estudo</NavLink>
         </nav>
         <div className="topbar-user">
           <span>{usuario.nome}</span>

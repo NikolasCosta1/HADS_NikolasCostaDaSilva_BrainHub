@@ -1,3 +1,5 @@
+import HtmlSanitizado from '../common/HtmlSanitizado.jsx';
+
 export default function ResultadoQuestao({ resultado }) {
   return (
     <section className={`resultado ${resultado.acertou ? 'resultado--ok' : 'resultado--erro'}`} aria-live="polite">
@@ -5,7 +7,9 @@ export default function ResultadoQuestao({ resultado }) {
       <p>Gabarito: <strong>{resultado.gabarito}</strong></p>
       <div className="explicacao">
         <h3>Explicação</h3>
-        <p>{resultado.explicacao}</p>
+        {resultado.explicacao
+          ? <HtmlSanitizado html={resultado.explicacao} as="div" />
+          : <p className="explicacao-vazia">Sem explicação cadastrada para esta questão.</p>}
       </div>
     </section>
   );

@@ -1,3 +1,5 @@
+import HtmlSanitizado from '../common/HtmlSanitizado.jsx';
+
 export default function AlternativaOpcao({ alternativa, name, selecionada, status = 'neutro', disabled, onSelect }) {
   const id = `${name}-${alternativa.id_alternativa}`;
   const classes = [
@@ -19,7 +21,7 @@ export default function AlternativaOpcao({ alternativa, name, selecionada, statu
         onChange={() => onSelect(alternativa.id_alternativa)}
       />
       <span className="alternativa-codigo">{alternativa.codigo})</span>
-      <span className="alternativa-texto">{alternativa.texto}</span>
+      <HtmlSanitizado html={alternativa.texto} as="span" className="alternativa-texto" />
     </label>
   );
 }

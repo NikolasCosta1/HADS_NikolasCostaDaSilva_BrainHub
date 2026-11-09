@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import AlternativaOpcao from '../../components/questoes/AlternativaOpcao.jsx';
 import ResultadoQuestao from '../../components/questoes/ResultadoQuestao.jsx';
+import OrigemQuestao from '../../components/questoes/OrigemQuestao.jsx';
+import Comentarios from '../../components/questoes/Comentarios.jsx';
+import HtmlSanitizado from '../../components/common/HtmlSanitizado.jsx';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import { buscarQuestao, responderQuestao } from '../../services/questoes/questoesService.js';
 import { validarResposta } from '../../validators/questoes/respostaValidator.js';
@@ -33,6 +36,11 @@ export default function QuestaoPage() {
       .catch(err => { if (ativo) setErroCarregamento(mensagemErroQuestao(err)); })
       .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
+  }, [id]);
+
+  // Recarrega só os comentários (sem mexer no restante da tela) após criar/editar/remover.
+  const recarregarComentarios = useCallback(() => {
+    buscarQuestao(id).then(dados => setQuestao(q => q && ({ ...q, comentarios: dados.comentarios })));
   }, [id]);
 
   async function responder(e) {
@@ -72,7 +80,8 @@ export default function QuestaoPage() {
   return (
     <article>
       <p className="breadcrumb">{questao.disciplina} · {questao.assunto}</p>
-      <p className="questao-enunciado">{questao.enunciado}</p>
+      <OrigemQuestao fonte={questao.fonte} metadadosFonte={questao.metadados_fonte} />
+      <HtmlSanitizado html={questao.enunciado} as="div" className="questao-enunciado" />
 
       <form onSubmit={responder} className="resolucao">
         <fieldset disabled={!!resultado || enviando}>
@@ -104,6 +113,8 @@ export default function QuestaoPage() {
       </form>
 
       {resultado && <ResultadoQuestao resultado={resultado} />}
+
+      <Comentarios idQuestao={questao.id_questao} comentarios={questao.comentarios || []} onMudar={recarregarComentarios} />
 
       <Link to={voltarPara} className="link-voltar">← Voltar para a lista</Link>
     </article>

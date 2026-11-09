@@ -68,3 +68,189 @@ fieldset:disabled .alternativa:not(.alternativa--correta):not(.alternativa--erra
 .link-voltar { display: inline-block; margin-top: 1.5rem; color: var(--primary); font-weight: 600; text-decoration: none; }
 .link-voltar:hover { text-decoration: underline; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Origem da questão (Quest API) */
+.origem-questao { display: flex; align-items: center; gap: .6rem; margin-bottom: .75rem; flex-wrap: wrap; }
+.badge-origem { background: var(--primary); color: var(--on-primary); }
+.origem-detalhes { font-size: .85rem; color: var(--muted); }
+
+/* HTML sanitizado vindo da Quest API herda a tipografia do texto comum */
+.questao-enunciado img, .alternativa-texto img, .explicacao img { max-width: 100%; height: auto; }
+.explicacao-vazia { margin-top: .35rem; color: var(--muted); font-style: italic; }
+
+/* Comentários */
+.comentarios { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.comentarios h3 { font-size: 1.05rem; margin-bottom: 1rem; }
+.comentario-form { display: grid; gap: .6rem; margin-bottom: 1.5rem; }
+.comentario-form textarea { width: 100%; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; resize: vertical; }
+.comentario-form textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--ring); }
+.comentarios-vazio { color: var(--muted); font-size: .9rem; }
+.lista-comentarios { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.comentario { padding: .9rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.comentario-cabecalho { display: flex; justify-content: space-between; gap: .75rem; font-size: .85rem; color: var(--muted); margin-bottom: .4rem; }
+.comentario-autor { font-weight: 600; color: var(--text); }
+.comentario-texto { line-height: 1.55; white-space: pre-line; }
+.comentario-edicao textarea { width: 100%; padding: .6rem .8rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; resize: vertical; }
+.comentario-acoes { display: flex; gap: .75rem; margin-top: .5rem; }
+.btn-link { background: none; border: 0; padding: 0; color: var(--primary); font: inherit; font-weight: 600; font-size: .85rem; cursor: pointer; }
+.btn-link:hover { text-decoration: underline; }
+.btn-link-danger { color: var(--danger); }
+
+/* Relatório de desempenho */
+.resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.card-resumo { display: grid; gap: .3rem; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-resumo-valor { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
+.card-resumo-titulo { font-size: .85rem; color: var(--muted); }
+
+.tabela-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.tabela-desempenho { width: 100%; border-collapse: collapse; background: var(--surface); }
+.tabela-desempenho th, .tabela-desempenho td { padding: .75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.tabela-desempenho th { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.tabela-desempenho tr:last-child td { border-bottom: 0; }
+.aproveitamento { font-weight: 700; }
+.aproveitamento--baixo { color: var(--danger); }
+.aproveitamento--alto { color: var(--success); }
+
+/* Avisos informativos (dados fictícios) */
+.alert-info { border-color: var(--border); background: var(--primary-soft); color: var(--text); }
+
+/* Sessões de estudo */
+.card-painel { padding: 1.25rem; margin-bottom: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.campos-linha { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
+.sessao-form textarea { width: 100%; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; resize: vertical; }
+.materiais-edicao { margin-top: .5rem; display: grid; gap: .6rem; }
+.materiais-edicao-cabecalho { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: .9rem; }
+.material-linha { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: .5rem; align-items: center; }
+.material-linha input { min-height: 40px; padding: 0 .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
+
+.lista-sessoes { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.card-sessao { padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-sessao-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.card-sessao h3 { font-size: 1.05rem; }
+.card-sessao-meta { margin-top: .2rem; font-size: .85rem; color: var(--muted); }
+.card-sessao-anotacoes { margin-top: .75rem; line-height: 1.55; white-space: pre-line; }
+.lista-materiais { margin: .75rem 0 0; padding-left: 1.1rem; display: grid; gap: .3rem; font-size: .9rem; }
+.lista-materiais a { color: var(--primary); }
+
+/* Layout do admin (menu lateral) */
+.admin-shell { min-height: 100%; display: flex; }
+.admin-sidebar { width: 240px; flex: none; display: flex; flex-direction: column; gap: 1.5rem; padding: 1.25rem 1rem; background: var(--surface); border-right: 1px solid var(--border); }
+.admin-nav { display: flex; flex-direction: column; gap: .2rem; flex: 1; }
+.admin-nav a { padding: .6rem .8rem; border-radius: 8px; color: var(--muted); font-weight: 600; text-decoration: none; }
+.admin-nav a:hover { color: var(--primary); background: var(--primary-soft); }
+.admin-nav a.active { color: var(--primary); background: var(--primary-soft); }
+.admin-sidebar-footer { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: .85rem; color: var(--muted); }
+.admin-main { flex: 1; min-width: 0; padding: 2rem clamp(1rem, 4vw, 2.5rem); max-width: 1100px; }
+
+@media (max-width: 760px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .admin-nav { flex-direction: row; flex-wrap: wrap; }
+  .admin-sidebar-footer { margin-left: auto; border-top: 0; padding-top: 0; }
+}
+
+/* Admin: banco de questões */
+.page-head-acao { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.status-ponto { font-size: .78rem; font-weight: 700; padding: .12rem .55rem; border-radius: 999px; }
+.status-ponto--ativa { background: var(--success-bg); color: var(--success); }
+.status-ponto--inativa { background: var(--danger-bg); color: var(--danger); }
+.card-questao-admin { padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-questao-admin-acoes { display: flex; gap: 1rem; margin-top: .6rem; }
+
+.questao-admin-form { max-width: 720px; }
+.field-label { font-size: .9rem; font-weight: 600; display: block; margin-bottom: .4rem; }
+.alternativas-admin { display: grid; gap: .5rem; margin: .25rem 0; }
+.alternativa-admin-linha { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: center; }
+.alternativa-admin-linha input { min-height: 42px; padding: 0 .8rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
+.checkbox-field { display: flex; align-items: center; gap: .6rem; font-size: .9rem; }
+.questao-admin-form textarea { width: 100%; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; resize: vertical; }
+
+/* Admin: importação Quest API */
+.filtros-importacao { margin: 1.25rem 0; }
+.previa-importacao, .resultado-importacao { margin-top: 1.5rem; }
+.previa-lista { margin-top: .9rem; }
+.resumo-importacao { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .35rem; }
+
+/* Admin: catálogo */
+.catalogo-colunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 1rem; }
+.catalogo-colunas h2 { font-size: 1.1rem; }
+.lista-catalogo { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .4rem; }
+.item-catalogo { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .6rem .9rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.item-catalogo--selecionado { border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring); }
+.item-catalogo-nome { display: flex; align-items: center; gap: .5rem; background: none; border: 0; padding: 0; color: var(--text); font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+
+/* Admin: usuários */
+.usuario-admin-form { max-width: 640px; }
+
+/* Admin: relatório geral */
+.secao-titulo { margin: 2rem 0 1rem; font-size: 1.1rem; }
+
+/* ===== Tema v2: visual mais limpo, inspirado em sites de estudo para concursos ===== */
+body { font-size: 16px; line-height: 1.5; }
+.btn { border-radius: 12px; font-weight: 700; }
+.btn-primary { box-shadow: 0 1px 2px rgba(79, 70, 229, .3); }
+.btn-secondary { background: var(--surface); }
+
+/* Cabeçalho do aluno: barra branca com abas sublinhadas */
+.topbar { gap: 2rem; padding: 0 clamp(1rem, 4vw, 2rem); border-bottom: 1px solid var(--border); box-shadow: var(--shadow); }
+.brand-mini { font-size: 1.15rem; letter-spacing: -.01em; padding: .8rem 0; }
+.topbar nav { align-self: stretch; gap: 1.75rem; }
+.topbar nav a { display: flex; align-items: center; padding: 0; border-radius: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--muted); }
+.topbar nav a:hover { color: var(--text); }
+.topbar nav a.active { background: none; color: var(--primary); border-bottom-color: var(--primary); }
+.topbar-user { padding: .6rem 0; }
+
+.app-main { max-width: 1160px; padding-top: 2.25rem; }
+.page-head { margin-bottom: 1.5rem; }
+.page-head h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; }
+.page-head p { font-size: 1rem; }
+
+/* Cards */
+.card-questao, .card-questao-admin, .card-sessao, .card-resumo, .card-painel, .comentario, .item-catalogo, .alternativa {
+  box-shadow: var(--shadow);
+}
+.card-questao { padding: 1.25rem 1.4rem; }
+.card-questao:hover { border-color: var(--primary); transform: translateY(-1px); }
+.card-questao { transition: border-color .15s, transform .15s; }
+.card-enunciado { font-size: 1rem; -webkit-line-clamp: 3; }
+.card-meta { align-items: center; margin-bottom: .6rem; }
+.badge { padding: .2rem .7rem; font-size: .78rem; }
+.chip { padding: .15rem .6rem; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-weight: 600; font-size: .78rem; }
+
+/* Tela de questões: painel de filtros + lista */
+.questoes-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 1.75rem; align-items: start; }
+.painel-filtros { position: sticky; top: 5rem; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+.painel-filtros h2 { font-size: 1rem; margin-bottom: 1rem; }
+.painel-filtros .filtros { grid-template-columns: 1fr; margin: 0; gap: .9rem; }
+.filtros-limpar { justify-self: start; padding-top: .25rem; }
+.select-field select { border-radius: 12px; background: var(--bg); }
+.select-field label { font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+@media (max-width: 860px) {
+  .questoes-layout { grid-template-columns: 1fr; }
+  .painel-filtros { position: static; }
+  .topbar { gap: 1rem; }
+}
+
+/* Página da questão */
+.questao-enunciado { font-size: 1.1rem; padding: 1.25rem 1.4rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+.alternativa { border-radius: 14px; }
+.alternativa-codigo { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; min-width: 1.8rem; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); font-size: .85rem; }
+.resultado { border-radius: var(--radius); }
+
+/* Admin: menu lateral no mesmo estilo */
+.admin-sidebar { box-shadow: var(--shadow); }
+.admin-nav a { border-left: 3px solid transparent; border-radius: 0 10px 10px 0; padding-left: .9rem; }
+.admin-nav a.active { border-left-color: var(--primary); }
+.admin-main { max-width: 1160px; }
+
+/* Tabelas e formulários */
+.tabela-wrap { box-shadow: var(--shadow); border-radius: var(--radius); }
+.tabela-desempenho th { background: var(--bg); }
+.field input, .comentario-form textarea, .sessao-form textarea, .questao-admin-form textarea, .alternativa-admin-linha input, .material-linha input { border-radius: 12px; }
+.login-card h1 { font-weight: 800; }
+
+/* Correção: selects do painel de filtros estouravam a coluna (largura natural do select) */
+.select-field { min-width: 0; }
+.select-field select { width: 100%; min-width: 0; }
+.questoes-layout > * { min-width: 0; }
+.painel-filtros .filtros { grid-template-columns: minmax(0, 1fr); }
