@@ -1,4 +1,4 @@
-import HtmlSeguro from '../common/HtmlSeguro.jsx';
+import HtmlSanitizado from '../common/HtmlSanitizado.jsx';
 
 export default function AlternativaOpcao({ alternativa, name, selecionada, status = 'neutro', disabled, onSelect }) {
   const id = `${name}-${alternativa.id_alternativa}`;
@@ -21,7 +21,7 @@ export default function AlternativaOpcao({ alternativa, name, selecionada, statu
         onChange={() => onSelect(alternativa.id_alternativa)}
       />
       <span className="alternativa-codigo">{alternativa.codigo})</span>
-      <HtmlSeguro as="span" className="alternativa-texto" html={alternativa.texto} />
+      <HtmlSanitizado html={alternativa.texto} as="span" className="alternativa-texto" />
     </label>
   );
 }

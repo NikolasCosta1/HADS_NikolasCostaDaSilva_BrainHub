@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import Logo from '../auth/Logo.jsx';
+import ThemeToggle from '../common/ThemeToggle.jsx';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 
 export default function AlunoLayout() {
@@ -17,6 +18,7 @@ export default function AlunoLayout() {
           <NavLink to="/aluno/sessoes">Sessões de estudo</NavLink>
         </nav>
         <div className="topbar-user">
+          <ThemeToggle />
           <span>{usuario.nome}</span>
           <button type="button" className="btn btn-secondary btn-sm" onClick={logout}>Sair</button>
         </div>

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { login as loginRequest, registrar as registrarRequest, me as meRequest } from '../services/auth/authService.js';
+import { login as loginRequest, me as meRequest } from '../services/auth/authService.js';
 import { setTokenProvider, setUnauthorizedHandler } from '../services/api.js';
 
 const CHAVE = 'brainhub.sessao';
@@ -60,9 +60,9 @@ export function AuthProvider({ children }) {
     return nova.usuario;
   }, []);
 
-  // O cadastro público já devolve o token: o aluno entra direto, sem passar pelo login.
-  const registrar = useCallback(async (dados) => {
-    const nova = await registrarRequest(dados);
+  // Usado pelo cadastro: o POST /auth/register já devolve token + usuário,
+  // então não faz sentido chamar login de novo.
+  const entrarComSessao = useCallback((nova) => {
     gravarSessao(nova);
     setSessao(nova);
     return nova.usuario;
@@ -75,9 +75,9 @@ export function AuthProvider({ children }) {
     autenticado: !!sessao?.token,
     verificando,
     login,
-    registrar,
+    entrarComSessao,
     logout,
-  }), [sessao, verificando, login, registrar, logout]);
+  }), [sessao, verificando, login, entrarComSessao, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

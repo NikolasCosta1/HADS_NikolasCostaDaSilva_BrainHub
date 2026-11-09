@@ -1,75 +1,99 @@
 import { useState } from 'react';
-import PasswordField from '../../components/auth/PasswordField.jsx';
-import { criarUsuario } from '../../services/admin/usuariosAdminService.js';
-import { validarCadastro } from '../../validators/auth/registerValidator.js';
-import { mensagemErroCadastro } from '../../utils/mensagensCadastro.js';
+import { criarUsuario } from '../../services/admin/usuariosService.js';
+import { validarUsuarioAdmin } from '../../validators/admin/usuarioAdminValidator.js';
+import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
 
-const VAZIO = { nome: '', email: '', senha: '', confirmacao: '', perfil: 'ALUNO' };
+const VALOR_INICIAL = { nome: '', email: '', senha: '', perfil: 'ALUNO' };
 
 export default function AdminUsuariosPage() {
-  const [v, setV] = useState(VAZIO);
+  const [valores, setValores] = useState(VALOR_INICIAL);
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState('');
-  const [criado, setCriado] = useState(null);
-  const [enviando, setEnviando] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  // O back não tem endpoint de listagem de usuários ainda: mostramos só os criados nesta sessão.
+  const [criadosNaSessao, setCriadosNaSessao] = useState([]);
 
-  const alterar = (e) => { setV(x => ({ ...x, [e.target.name]: e.target.value })); setCriado(null); if (erros[e.target.name]) setErros(x => ({ ...x, [e.target.name]: undefined })); };
+  const alterar = (e) => setValores(v => ({ ...v, [e.target.name]: e.target.value }));
 
   async function enviar(e) {
     e.preventDefault();
-    if (enviando) return;
-    const novos = validarCadastro(v);
-    setErros(novos);
-    if (Object.keys(novos).length) return;
-    setEnviando(true); setErroGeral('');
+    const novosErros = validarUsuarioAdmin(valores);
+    setErros(novosErros);
+    if (Object.keys(novosErros).length) return;
+
+    setSalvando(true);
+    setErroGeral('');
     try {
-      setCriado(await criarUsuario({ nome: v.nome.trim(), email: v.email.trim(), senha: v.senha, perfil: v.perfil }));
-      setV(VAZIO);
-    } catch (err) { setErroGeral(mensagemErroCadastro(err)); }
-    finally { setEnviando(false); }
+      const criado = await criarUsuario({ nome: valores.nome.trim(), email: valores.email.trim(), senha: valores.senha, perfil: valores.perfil });
+      setCriadosNaSessao(lista => [criado, ...lista]);
+      setValores(VALOR_INICIAL);
+    } catch (err) {
+      setErroGeral(mensagemErroQuestao(err));
+    } finally {
+      setSalvando(false);
+    }
   }
 
   return (
     <>
       <div className="page-head">
         <h1>Usuários</h1>
-        <p>Crie contas de aluno ou de administrador. O back ainda não tem listagem de usuários.</p>
+        <p>Cadastre alunos ou outros administradores.</p>
       </div>
-      {erroGeral && <div className="alert" role="alert">{erroGeral}</div>}
-      {criado && <div className="sucesso" role="status">Usuário {criado.nome} ({criado.perfil === 'ADMINISTRADOR' ? 'administrador' : 'aluno'}) criado com o e-mail {criado.email}.</div>}
 
-      <form onSubmit={enviar} noValidate className="painel form-grade">
-        <div className="field">
-          <label htmlFor="u-nome">Nome</label>
-          <input id="u-nome" name="nome" value={v.nome} onChange={alterar} maxLength={150} aria-invalid={!!erros.nome} />
-          {erros.nome && <p className="field-error">{erros.nome}</p>}
+      <form onSubmit={enviar} className="form usuario-admin-form">
+        <div className="alert" role="alert" hidden={!erroGeral}>{erroGeral}</div>
+
+        <div className="campos-linha">
+          <div className="field">
+            <label htmlFor="nome">Nome</label>
+            <input id="nome" name="nome" type="text" maxLength={150} value={valores.nome} onChange={alterar}
+              aria-invalid={!!erros.nome} aria-describedby={erros.nome ? 'nome-erro' : undefined} />
+            {erros.nome && <p className="field-error" id="nome-erro">{erros.nome}</p>}
+          </div>
+          <div className="field">
+            <label htmlFor="email">E-mail</label>
+            <input id="email" name="email" type="email" maxLength={254} value={valores.email} onChange={alterar}
+              aria-invalid={!!erros.email} aria-describedby={erros.email ? 'email-erro' : undefined} />
+            {erros.email && <p className="field-error" id="email-erro">{erros.email}</p>}
+          </div>
         </div>
-        <div className="field">
-          <label htmlFor="u-email">E-mail</label>
-          <input id="u-email" name="email" type="email" value={v.email} onChange={alterar} maxLength={254} aria-invalid={!!erros.email} />
-          {erros.email && <p className="field-error">{erros.email}</p>}
+
+        <div className="campos-linha">
+          <div className="field">
+            <label htmlFor="senha">Senha provisória</label>
+            <input id="senha" name="senha" type="text" maxLength={128} value={valores.senha} onChange={alterar} placeholder="Mínimo de 8 caracteres"
+              aria-invalid={!!erros.senha} aria-describedby={erros.senha ? 'senha-erro' : undefined} />
+            {erros.senha && <p className="field-error" id="senha-erro">{erros.senha}</p>}
+          </div>
+          <div className="select-field">
+            <label htmlFor="perfil">Perfil</label>
+            <select id="perfil" name="perfil" value={valores.perfil} onChange={alterar}>
+              <option value="ALUNO">Aluno</option>
+              <option value="ADMINISTRADOR">Administrador</option>
+            </select>
+          </div>
         </div>
-        <div className="field">
-          <label htmlFor="senha">Senha</label>
-          <PasswordField id="senha" name="senha" autoComplete="new-password" value={v.senha} onChange={alterar} error={erros.senha} maxLength={128} />
-          {erros.senha && <p className="field-error">{erros.senha}</p>}
-        </div>
-        <div className="field">
-          <label htmlFor="confirmacao">Confirmar senha</label>
-          <PasswordField id="confirmacao" name="confirmacao" autoComplete="new-password" value={v.confirmacao} onChange={alterar} error={erros.confirmacao} maxLength={128} />
-          {erros.confirmacao && <p className="field-error">{erros.confirmacao}</p>}
-        </div>
-        <div className="field">
-          <label htmlFor="u-perfil">Perfil</label>
-          <select id="u-perfil" name="perfil" value={v.perfil} onChange={alterar}>
-            <option value="ALUNO">Aluno</option>
-            <option value="ADMINISTRADOR">Administrador</option>
-          </select>
-        </div>
-        <div className="linha-acoes campo-largo">
-          <button type="submit" className="btn btn-primary btn-inline" disabled={enviando}>{enviando ? 'Criando…' : 'Criar usuário'}</button>
+
+        <div className="acoes">
+          <button type="submit" className="btn btn-primary btn-inline" disabled={salvando}>
+            {salvando ? 'Cadastrando…' : 'Cadastrar usuário'}
+          </button>
         </div>
       </form>
+
+      {criadosNaSessao.length > 0 && (
+        <div className="card-painel">
+          <h3>Cadastrados agora</h3>
+          <ul className="lista-catalogo">
+            {criadosNaSessao.map(u => (
+              <li key={u.id_usuario} className="item-catalogo">
+                <span className="item-catalogo-nome">{u.nome} <span className="origem-detalhes">— {u.email} · {u.perfil}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </>
   );
 }

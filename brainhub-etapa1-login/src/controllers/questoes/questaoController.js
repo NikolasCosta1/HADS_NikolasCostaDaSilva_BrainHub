@@ -1,9 +1,0 @@
-import * as service from '../../services/questoes/questaoService.js';
-export const listAdmin=async(req,res)=>res.json(await service.listQuestions(req.query,true));
-export const listAluno=async(req,res)=>res.json(await service.listQuestions(req.query,false));
-export const getAdmin=async(req,res)=>res.json(await service.findQuestion(req.params.id,true));
-export const getAluno=async(req,res)=>res.json(await service.findQuestion(req.params.id,false));
-export const create=async(req,res)=>res.status(201).json(await service.createQuestion(req.body,req.user.id_usuario));
-export const update=async(req,res)=>res.json(await service.updateQuestion(req.params.id,req.body));
-export const deactivate=async(req,res)=>res.json(await service.deactivateQuestion(req.params.id));
-export const answer=async(req,res)=>res.status(201).json(await service.answerQuestion(req.params.id,req.body,req.user.id_usuario));

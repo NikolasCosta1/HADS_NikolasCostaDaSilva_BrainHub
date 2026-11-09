@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import PasswordField from './PasswordField.jsx';
 import { validarCadastro } from '../../validators/auth/registerValidator.js';
-import { mensagemErroCadastro } from '../../utils/mensagensCadastro.js';
-
-const ORDEM = ['nome', 'email', 'senha', 'confirmacao'];
+import { mensagemErroCadastro } from '../../utils/mensagensLogin.js';
 
 export default function RegisterForm({ onSubmit }) {
-  const [valores, setValores] = useState({ nome: '', email: '', senha: '', confirmacao: '' });
+  const [valores, setValores] = useState({ nome: '', email: '', senha: '', confirmarSenha: '' });
   const [erros, setErros] = useState({});
   const [erroGeral, setErroGeral] = useState('');
   const [enviando, setEnviando] = useState(false);
 
   const alterar = (e) => {
     const { name, value } = e.target;
-    setValores(v => ({ ...v, [name]: value }));
-    if (erros[name]) setErros(x => ({ ...x, [name]: undefined }));
+    setValores((v) => ({ ...v, [name]: value }));
+    if (erros[name]) setErros((x) => ({ ...x, [name]: undefined }));
     if (erroGeral) setErroGeral('');
   };
 
@@ -23,15 +21,17 @@ export default function RegisterForm({ onSubmit }) {
     if (enviando) return;
     const novos = validarCadastro(valores);
     setErros(novos);
-    const primeiro = ORDEM.find(c => novos[c]);
-    if (primeiro) { document.getElementById(primeiro)?.focus(); return; }
+    if (Object.keys(novos).length) {
+      const ordem = ['nome', 'email', 'senha', 'confirmarSenha'];
+      document.getElementById(ordem.find((campo) => novos[campo]))?.focus();
+      return;
+    }
     setEnviando(true);
     setErroGeral('');
     try {
       await onSubmit({ nome: valores.nome.trim(), email: valores.email.trim(), senha: valores.senha });
     } catch (err) {
       setErroGeral(err.status !== undefined ? mensagemErroCadastro(err) : 'Não foi possível concluir o cadastro. Tente novamente.');
-      setValores(v => ({ ...v, senha: '', confirmacao: '' }));
       setEnviando(false);
     }
   };
@@ -42,36 +42,36 @@ export default function RegisterForm({ onSubmit }) {
 
       <div className="field">
         <label htmlFor="nome">Nome</label>
-        <input id="nome" name="nome" type="text" autoComplete="name" placeholder="Seu nome completo" maxLength={150}
-          value={valores.nome} onChange={alterar} autoFocus
+        <input id="nome" name="nome" type="text" autoComplete="name" placeholder="Seu nome completo"
+          value={valores.nome} onChange={alterar} maxLength={150} autoFocus
           aria-invalid={!!erros.nome} aria-describedby={erros.nome ? 'nome-erro' : undefined} />
         {erros.nome && <p className="field-error" id="nome-erro">{erros.nome}</p>}
       </div>
 
       <div className="field">
         <label htmlFor="email">E-mail</label>
-        <input id="email" name="email" type="email" autoComplete="email" inputMode="email" placeholder="voce@exemplo.com" maxLength={254}
-          value={valores.email} onChange={alterar}
+        <input id="email" name="email" type="email" autoComplete="username" inputMode="email" placeholder="voce@exemplo.com"
+          value={valores.email} onChange={alterar} maxLength={254}
           aria-invalid={!!erros.email} aria-describedby={erros.email ? 'email-erro' : undefined} />
         {erros.email && <p className="field-error" id="email-erro">{erros.email}</p>}
       </div>
 
       <div className="field">
         <label htmlFor="senha">Senha</label>
-        <PasswordField id="senha" name="senha" autoComplete="new-password" placeholder="De 8 a 128 caracteres" maxLength={128}
+        <PasswordField id="senha" name="senha" autoComplete="new-password" placeholder="Mínimo de 8 caracteres"
           value={valores.senha} onChange={alterar} error={erros.senha} />
         {erros.senha && <p className="field-error" id="senha-erro">{erros.senha}</p>}
       </div>
 
       <div className="field">
-        <label htmlFor="confirmacao">Confirmar senha</label>
-        <PasswordField id="confirmacao" name="confirmacao" autoComplete="new-password" placeholder="Repita a senha" maxLength={128}
-          value={valores.confirmacao} onChange={alterar} error={erros.confirmacao} />
-        {erros.confirmacao && <p className="field-error" id="confirmacao-erro">{erros.confirmacao}</p>}
+        <label htmlFor="confirmarSenha">Confirmar senha</label>
+        <PasswordField id="confirmarSenha" name="confirmarSenha" autoComplete="new-password" placeholder="Repita a senha"
+          value={valores.confirmarSenha} onChange={alterar} error={erros.confirmarSenha} />
+        {erros.confirmarSenha && <p className="field-error" id="confirmarSenha-erro">{erros.confirmarSenha}</p>}
       </div>
 
       <button type="submit" className="btn btn-primary" disabled={enviando}>
-        {enviando ? <><span className="spinner" aria-hidden="true" /> Criando conta…</> : 'Criar conta'}
+        {enviando ? <><span className="spinner" aria-hidden="true" /> Cadastrando…</> : 'Criar conta'}
       </button>
     </form>
   );
