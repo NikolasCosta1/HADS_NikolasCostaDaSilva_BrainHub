@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Lightbulb } from 'lucide-react';
 import { listarCaderno, salvarNoCaderno } from '../../services/questoes/cadernoService.js';
 import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
 import '../../styles/anotacoes.css';
@@ -46,7 +47,7 @@ export default function AnotacaoErro({ idQuestao, idResposta }) {
 
   return (
     <section className="anotacao-erro" aria-labelledby="anotacao-titulo">
-      <h3 id="anotacao-titulo">Por que você errou?</h3>
+      <h3 id="anotacao-titulo"><Lightbulb size={18} />Por que você errou?</h3>
       <p className="anotacao-dica">Anote o motivo para revisar depois. Ela fica salva na aba “Anotações”.</p>
       <form onSubmit={salvar}>
         <textarea

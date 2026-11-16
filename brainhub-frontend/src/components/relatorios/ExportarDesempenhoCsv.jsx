@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Download } from 'lucide-react';
 import { request } from '../../services/api.js';
 import { baixarCsv } from '../../utils/exportarCsv.js';
 import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
@@ -49,7 +50,7 @@ export default function ExportarDesempenhoCsv({ idDisciplina, idAssunto }) {
   return (
     <div className="exportar-csv">
       <button type="button" className="btn btn-secondary btn-inline" onClick={exportar} disabled={baixando}>
-        {baixando ? 'Gerando…' : 'Exportar CSV'}
+        <Download size={18} />{baixando ? 'Gerando…' : 'Exportar CSV'}
       </button>
       {erro && <p className="field-error" role="alert">{erro}</p>}
     </div>

@@ -1,7 +1,18 @@
 import { useState } from 'react';
+import { AlertCircle, ArrowRight, Mail, User } from 'lucide-react';
 import PasswordField from './PasswordField.jsx';
 import { validarCadastro } from '../../validators/auth/registerValidator.js';
 import { mensagemErroCadastro } from '../../utils/mensagensLogin.js';
+
+function MensagemErro({ id, texto }) {
+  if (!texto) return null;
+  return (
+    <p className="bh-field-error-text" id={id}>
+      <AlertCircle size={14} />
+      <span>{texto}</span>
+    </p>
+  );
+}
 
 export default function RegisterForm({ onSubmit }) {
   const [valores, setValores] = useState({ nome: '', email: '', senha: '', confirmarSenha: '' });
@@ -37,41 +48,62 @@ export default function RegisterForm({ onSubmit }) {
   };
 
   return (
-    <form onSubmit={enviar} noValidate className="form">
-      <div className="alert" role="alert" hidden={!erroGeral}>{erroGeral}</div>
+    <form onSubmit={enviar} noValidate className="bh-auth-form">
+      {erroGeral && (
+        <div className="bh-alert-box bh-alert-danger" role="alert">
+          <AlertCircle size={18} style={{ flexShrink: 0, marginTop: 2 }} />
+          <div>{erroGeral}</div>
+        </div>
+      )}
 
-      <div className="field">
+      <div className="bh-input-group">
         <label htmlFor="nome">Nome</label>
-        <input id="nome" name="nome" type="text" autoComplete="name" placeholder="Seu nome completo"
-          value={valores.nome} onChange={alterar} maxLength={150} autoFocus
-          aria-invalid={!!erros.nome} aria-describedby={erros.nome ? 'nome-erro' : undefined} />
-        {erros.nome && <p className="field-error" id="nome-erro">{erros.nome}</p>}
+        <div className="bh-input-container">
+          <span className="bh-input-leading-icon"><User size={18} /></span>
+          <input id="nome" name="nome" type="text" className="bh-input-field" autoComplete="name" placeholder="Seu nome completo"
+            value={valores.nome} onChange={alterar} maxLength={150} autoFocus
+            aria-invalid={!!erros.nome} aria-describedby={erros.nome ? 'nome-erro' : undefined} />
+        </div>
+        <MensagemErro id="nome-erro" texto={erros.nome} />
       </div>
 
-      <div className="field">
+      <div className="bh-input-group">
         <label htmlFor="email">E-mail</label>
-        <input id="email" name="email" type="email" autoComplete="username" inputMode="email" placeholder="voce@exemplo.com"
-          value={valores.email} onChange={alterar} maxLength={254}
-          aria-invalid={!!erros.email} aria-describedby={erros.email ? 'email-erro' : undefined} />
-        {erros.email && <p className="field-error" id="email-erro">{erros.email}</p>}
+        <div className="bh-input-container">
+          <span className="bh-input-leading-icon"><Mail size={18} /></span>
+          <input id="email" name="email" type="email" className="bh-input-field" autoComplete="username" inputMode="email" placeholder="voce@exemplo.com"
+            value={valores.email} onChange={alterar} maxLength={254}
+            aria-invalid={!!erros.email} aria-describedby={erros.email ? 'email-erro' : undefined} />
+        </div>
+        <MensagemErro id="email-erro" texto={erros.email} />
       </div>
 
-      <div className="field">
+      <div className="bh-input-group">
         <label htmlFor="senha">Senha</label>
         <PasswordField id="senha" name="senha" autoComplete="new-password" placeholder="Mínimo de 8 caracteres"
           value={valores.senha} onChange={alterar} error={erros.senha} />
-        {erros.senha && <p className="field-error" id="senha-erro">{erros.senha}</p>}
+        <MensagemErro id="senha-erro" texto={erros.senha} />
       </div>
 
-      <div className="field">
+      <div className="bh-input-group">
         <label htmlFor="confirmarSenha">Confirmar senha</label>
         <PasswordField id="confirmarSenha" name="confirmarSenha" autoComplete="new-password" placeholder="Repita a senha"
           value={valores.confirmarSenha} onChange={alterar} error={erros.confirmarSenha} />
-        {erros.confirmarSenha && <p className="field-error" id="confirmarSenha-erro">{erros.confirmarSenha}</p>}
+        <MensagemErro id="confirmarSenha-erro" texto={erros.confirmarSenha} />
       </div>
 
-      <button type="submit" className="btn btn-primary" disabled={enviando}>
-        {enviando ? <><span className="spinner" aria-hidden="true" /> Cadastrando…</> : 'Criar conta'}
+      <button type="submit" className="bh-btn-submit" disabled={enviando} aria-busy={enviando}>
+        {enviando ? (
+          <>
+            <span className="bh-spinner-ring" aria-hidden="true" />
+            <span>Criando sua conta…</span>
+          </>
+        ) : (
+          <>
+            <span>Criar conta</span>
+            <ArrowRight size={18} className="bh-btn-arrow" />
+          </>
+        )}
       </button>
     </form>
   );

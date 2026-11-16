@@ -1,13 +1,15 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 // O back não informa o total de registros, então só dá para ir para a página anterior ou seguinte.
 export default function Paginacao({ page, temProxima, desabilitada, onChange }) {
   return (
     <nav className="paginacao" aria-label="Paginação">
       <button type="button" className="btn btn-secondary btn-sm" onClick={() => onChange(page - 1)} disabled={page <= 1 || desabilitada}>
-        Anterior
+        <ChevronLeft size={16} />Anterior
       </button>
       <span>Página {page}</span>
       <button type="button" className="btn btn-secondary btn-sm" onClick={() => onChange(page + 1)} disabled={!temProxima || desabilitada}>
-        Próxima
+        Próxima<ChevronRight size={16} />
       </button>
     </nav>
   );

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import HtmlSanitizado from '../../components/common/HtmlSanitizado.jsx';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import {
@@ -186,7 +187,7 @@ export default function AnotacoesPage() {
           <h1>Anotações de revisão</h1>
           <p>O que você errou e o motivo. Exclua cada anotação depois de revisar.</p>
         </div>
-        {!criando && <button type="button" className="btn btn-primary btn-inline" onClick={() => setCriando(true)}>+ Nova anotação</button>}
+        {!criando && <button type="button" className="btn btn-primary btn-inline" onClick={() => setCriando(true)}><Plus size={18} />Nova anotação</button>}
       </div>
 
       {criando && <NovaAnotacao onSalva={() => { setCriando(false); carregar(); }} onCancelar={() => setCriando(false)} />}

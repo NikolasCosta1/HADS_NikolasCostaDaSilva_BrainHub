@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import { listarDisciplinasAdmin } from '../../services/admin/catalogoAdminService.js';
 import { buscarRelatorioGeral } from '../../services/relatorios/relatoriosService.js';
@@ -58,7 +59,7 @@ export default function AdminRelatorioGeralPage() {
           <p>Visão consolidada das respostas dos alunos, por período e disciplina.</p>
         </div>
         <button type="button" className="btn btn-secondary btn-inline" onClick={exportar} disabled={!relatorio || relatorio.assuntos.length === 0}>
-          Exportar CSV
+          <Download size={18} />Exportar CSV
         </button>
       </div>
 

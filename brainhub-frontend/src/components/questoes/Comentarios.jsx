@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MessageSquare } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { criarComentario, atualizarComentario, removerComentario } from '../../services/questoes/comentariosService.js';
 import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
@@ -107,7 +108,7 @@ export default function Comentarios({ idQuestao, comentarios, onMudar }) {
 
   return (
     <section className="comentarios">
-      <h3>Comentários {comentarios.length > 0 && `(${comentarios.length})`}</h3>
+      <h3><MessageSquare size={18} />Comentários {comentarios.length > 0 && `(${comentarios.length})`}</h3>
 
       <form onSubmit={enviar} className="comentario-form">
         <textarea

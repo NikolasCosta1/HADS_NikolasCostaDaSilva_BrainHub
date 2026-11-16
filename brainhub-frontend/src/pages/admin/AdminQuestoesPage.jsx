@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import FiltrosQuestoes from '../../components/questoes/FiltrosQuestoes.jsx';
 import Paginacao from '../../components/questoes/Paginacao.jsx';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
@@ -82,7 +83,7 @@ export default function AdminQuestoesPage() {
           <h1>Banco de questões</h1>
           <p>Cadastre, edite e inative questões do banco local.</p>
         </div>
-        <Link to="/admin/questoes/novo" className="btn btn-primary btn-inline">+ Nova questão</Link>
+        <Link to="/admin/questoes/novo" className="btn btn-primary btn-inline"><Plus size={18} />Nova questão</Link>
       </div>
 
       <FiltrosQuestoes

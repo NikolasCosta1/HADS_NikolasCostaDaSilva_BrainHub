@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import SessaoForm from '../../components/sessoes/SessaoForm.jsx';
 import { listarSessoes, salvarSessao, removerSessao } from '../../services/sessoes/sessoesMockService.js';
 
@@ -45,7 +46,7 @@ export default function SessoesEstudoPage() {
 
       {!mostrarForm && (
         <div className="acoes">
-          <button type="button" className="btn btn-primary btn-inline" onClick={abrirNova}>+ Nova sessão</button>
+          <button type="button" className="btn btn-primary btn-inline" onClick={abrirNova}><Plus size={18} />Nova sessão</button>
         </div>
       )}
 

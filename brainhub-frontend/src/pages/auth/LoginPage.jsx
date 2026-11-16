@@ -228,11 +228,6 @@ export default function LoginPage() {
               <span className="dot">.</span>
             </span>
           </Link>
-
-          <div className="bh-version-badge">
-            <span className="bh-pulse-dot" />
-            <span>v2.4 Inteligência Ativa</span>
-          </div>
         </div>
 
         {/* Conteúdo Central */}
@@ -323,29 +318,6 @@ export default function LoginPage() {
               </div>
               <h4>Gabarito Analítico</h4>
               <p>Explicações minuciosas com fundamentação teórica de peso.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Rodapé Social Proof / Confiança */}
-        <div className="bh-social-proof">
-          <div className="bh-avatar-stack">
-            <div className="bh-avatar-pill bh-av-1">MT</div>
-            <div className="bh-avatar-pill bh-av-2">LC</div>
-            <div className="bh-avatar-pill bh-av-3">RS</div>
-            <div className="bh-avatar-pill bh-av-4">+15k</div>
-          </div>
-          <div>
-            <div className="bh-social-text">
-              <strong>Mais de 15.000 estudantes</strong> praticando hoje.
-            </div>
-            <div className="bh-stars-row">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i}>★</span>
-              ))}
-              <span style={{ marginLeft: 6, color: '#94a3b8', fontSize: '0.75rem' }}>
-                4.9 / 5.0 em aprovações
-              </span>
             </div>
           </div>
         </div>

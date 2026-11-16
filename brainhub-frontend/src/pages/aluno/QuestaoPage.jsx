@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import AlternativaOpcao from '../../components/questoes/AlternativaOpcao.jsx';
 import ResultadoQuestao from '../../components/questoes/ResultadoQuestao.jsx';
 import OrigemQuestao from '../../components/questoes/OrigemQuestao.jsx';
@@ -75,7 +76,7 @@ export default function QuestaoPage() {
     return (
       <>
         <div className="alert" role="alert">{erroCarregamento || 'Questão não encontrada.'}</div>
-        <Link to={voltarPara} className="link-voltar">← Voltar para a lista</Link>
+        <Link to={voltarPara} className="link-voltar"><ArrowLeft size={16} />Voltar para a lista</Link>
       </>
     );
   }
@@ -122,7 +123,7 @@ export default function QuestaoPage() {
         <Comentarios idQuestao={questao.id_questao} comentarios={questao.comentarios || []} onMudar={recarregarComentarios} />
       </div>
 
-      <Link to={voltarPara} className="link-voltar">← Voltar para a lista</Link>
+      <Link to={voltarPara} className="link-voltar"><ArrowLeft size={16} />Voltar para a lista</Link>
     </article>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { SlidersHorizontal } from 'lucide-react';
 import FiltrosQuestoes from '../../components/questoes/FiltrosQuestoes.jsx';
 import CardQuestao from '../../components/questoes/CardQuestao.jsx';
 import Paginacao from '../../components/questoes/Paginacao.jsx';
@@ -91,7 +92,7 @@ export default function QuestoesPage() {
 
       <div className="questoes-layout">
         <aside className="painel-filtros" aria-label="Filtros">
-          <h2>Filtros</h2>
+          <h2><SlidersHorizontal size={17} />Filtros</h2>
           <FiltrosQuestoes
             disciplinas={disciplinas}
             assuntos={assuntos}

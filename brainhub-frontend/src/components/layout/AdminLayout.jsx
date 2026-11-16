@@ -1,14 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import Logo from '../auth/Logo.jsx';
+import { Library, Download, Layers, Users, BarChart3, LogOut } from 'lucide-react';
+import Marca from '../common/Marca.jsx';
 import ThemeToggle from '../common/ThemeToggle.jsx';
+import { iniciais } from '../common/iniciais.js';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 
 const ITENS = [
-  { to: '/admin/questoes', label: 'Banco de questões' },
-  { to: '/admin/importar', label: 'Importar da Quest API' },
-  { to: '/admin/catalogo', label: 'Catálogo' },
-  { to: '/admin/usuarios', label: 'Usuários' },
-  { to: '/admin/relatorio', label: 'Relatório geral' },
+  { to: '/admin/questoes', label: 'Banco de questões', icone: Library },
+  { to: '/admin/importar', label: 'Importar da Quest API', icone: Download },
+  { to: '/admin/catalogo', label: 'Catálogo', icone: Layers },
+  { to: '/admin/usuarios', label: 'Usuários', icone: Users },
+  { to: '/admin/relatorio', label: 'Relatório geral', icone: BarChart3 },
 ];
 
 export default function AdminLayout() {
@@ -16,19 +18,17 @@ export default function AdminLayout() {
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <div className="brand-mini">
-          <Logo size={28} />
-          <span>BrainHub</span>
-        </div>
+        <Marca size={32} />
         <nav aria-label="Administração" className="admin-nav">
-          {ITENS.map(item => (
-            <NavLink key={item.to} to={item.to} end={item.to === '/admin/questoes'}>{item.label}</NavLink>
+          {ITENS.map(({ to, label, icone: Icone }) => (
+            <NavLink key={to} to={to} end={to === '/admin/questoes'}><Icone size={18} />{label}</NavLink>
           ))}
         </nav>
         <div className="admin-sidebar-footer">
-          <span>{usuario.nome}</span>
+          <span className="avatar" aria-hidden="true">{iniciais(usuario.nome)}</span>
+          <span className="usuario-nome">{usuario.nome}</span>
           <ThemeToggle />
-          <button type="button" className="btn btn-secondary btn-sm" onClick={logout}>Sair</button>
+          <button type="button" className="btn-tema" onClick={logout} aria-label="Sair" title="Sair"><LogOut size={18} /></button>
         </div>
       </aside>
       <main className="admin-main">
