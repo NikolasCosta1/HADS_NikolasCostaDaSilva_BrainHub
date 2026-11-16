@@ -9,7 +9,7 @@ export async function getQuestion(db, questionId, admin = false) {
   question.comentarios = (await db.query(`SELECT c.id_comentario,c.id_usuario,c.texto,c.criado_em,c.atualizado_em,u.nome AS autor
     FROM comentario_questao c JOIN usuario u USING(id_usuario) WHERE c.id_questao=$1 ORDER BY c.criado_em,c.id_comentario`, [questionId])).rows;
   if (admin) {
-    const answer = (await db.query('SELECT a.codigo AS gabarito,g.explicacao FROM gabarito g JOIN alternativa a ON a.id_alternativa=g.id_alternativa_correta WHERE g.id_questao=$1', [questionId])).rows[0];
+    const answer = (await db.query('SELECT a.codigo AS gabarito FROM gabarito g JOIN alternativa a ON a.id_alternativa=g.id_alternativa_correta WHERE g.id_questao=$1', [questionId])).rows[0];
     Object.assign(question, answer);
   }
   return question;
@@ -20,5 +20,5 @@ export async function saveOptionsAndAnswer(db, questionId, data) {
     const { rows } = await db.query('INSERT INTO alternativa(id_questao,codigo,texto) VALUES ($1,$2,$3) RETURNING id_alternativa', [questionId,option.codigo,option.texto]);
     if (option.codigo === data.gabarito) correctId=rows[0].id_alternativa;
   }
-  await db.query('INSERT INTO gabarito(id_questao,id_alternativa_correta,explicacao) VALUES ($1,$2,$3)', [questionId,correctId,data.explicacao ?? null]);
+  await db.query('INSERT INTO gabarito(id_questao,id_alternativa_correta) VALUES ($1,$2)', [questionId,correctId]);
 }

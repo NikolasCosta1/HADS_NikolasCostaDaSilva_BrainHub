@@ -5,6 +5,7 @@ import Paginacao from '../../components/questoes/Paginacao.jsx';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import { listarDisciplinas, listarAssuntos } from '../../services/disciplinas/disciplinasService.js';
 import { buscarDesempenhoPorAssunto } from '../../services/relatorios/relatoriosService.js';
+import ExportarDesempenhoCsv from '../../components/relatorios/ExportarDesempenhoCsv.jsx';
 import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
 
 const LIMITE = 10;
@@ -78,9 +79,12 @@ export default function DesempenhoPage() {
 
   return (
     <>
-      <div className="page-head">
-        <h1>Desempenho por assunto</h1>
-        <p>Veja seu aproveitamento nos assuntos que você já praticou.</p>
+      <div className="page-head page-head-acao">
+        <div>
+          <h1>Desempenho por assunto</h1>
+          <p>Veja seu aproveitamento nos assuntos que você já praticou.</p>
+        </div>
+        <ExportarDesempenhoCsv idDisciplina={idDisciplina} idAssunto={idAssunto} />
       </div>
 
       {resumo && (

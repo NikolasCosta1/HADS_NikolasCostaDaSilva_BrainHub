@@ -53,21 +53,11 @@ export async function listQuestions(query,admin) {
   const disciplines=query.id_disciplinas === undefined
     ? (query.id_disciplina === undefined ? null : [id(query.id_disciplina,'id_disciplina')])
     : parseIds(query.id_disciplinas,'matérias');
-  const banca=query.banca ? String(query.banca).slice(0,100) : null;
-  const ano=query.ano ? String(query.ano).slice(0,10) : null;
   const { rows }=await pool.query(`SELECT q.id_questao,q.id_assunto,q.enunciado,q.tipo,q.ativa,q.fonte,q.codigo_externo,q.metadados_fonte,a.nome AS assunto,d.nome AS disciplina
     FROM questao q JOIN assunto a USING(id_assunto) JOIN disciplina d USING(id_disciplina)
     WHERE ($1::BIGINT[] IS NULL OR q.id_assunto=ANY($1::BIGINT[])) AND ($2::BIGINT[] IS NULL OR d.id_disciplina=ANY($2::BIGINT[]))
-    AND ($5::TEXT IS NULL OR COALESCE(q.metadados_fonte->'provas'->0->'banca'->>'nome',q.metadados_fonte->'provas'->0->>'banca')=$5) AND ($6::TEXT IS NULL OR q.metadados_fonte->'provas'->0->>'ano'=$6)
-    ${admin ? '' : 'AND q.ativa AND a.ativo AND d.ativo'} ORDER BY q.id_questao DESC LIMIT $3 OFFSET $4`,[subjects,disciplines,limit,offset,banca,ano]);
+    ${admin ? '' : 'AND q.ativa AND a.ativo AND d.ativo'} ORDER BY q.id_questao DESC LIMIT $3 OFFSET $4`,[subjects,disciplines,limit,offset]);
   return { page,limit,items:rows };
-}
-// Valores disponíveis para os filtros de banca e ano (lidos de metadados_fonte.provas[0]).
-export async function listFilterOptions() {
-  const { rows }=await pool.query(`SELECT DISTINCT COALESCE(q.metadados_fonte->'provas'->0->'banca'->>'nome',q.metadados_fonte->'provas'->0->>'banca') AS banca,q.metadados_fonte->'provas'->0->>'ano' AS ano
-    FROM questao q JOIN assunto a USING(id_assunto) JOIN disciplina d USING(id_disciplina) WHERE q.ativa AND a.ativo AND d.ativo`);
-  const unique=key=>[...new Set(rows.map(r=>r[key]).filter(Boolean))];
-  return { bancas:unique('banca').sort((x,y)=>x.localeCompare(y,'pt-BR')), anos:unique('ano').sort((x,y)=>y.localeCompare(x)) };
 }
 export async function answerQuestion(questionId,body,userId) {
   questionId=id(questionId); const b=object(body), optionId=id(b.id_alternativa,'id_alternativa');
@@ -76,10 +66,10 @@ export async function answerQuestion(questionId,body,userId) {
     if (!rows[0]?.ativa) throw new HttpError(404,'Questão indisponível.');
     await checkSubject(db,rows[0].id_assunto);
     if (!(await db.query('SELECT 1 FROM alternativa WHERE id_questao=$1 AND id_alternativa=$2',[questionId,optionId])).rowCount) throw new HttpError(400,'Alternativa não pertence à questão.');
-    const answer=(await db.query('SELECT g.id_alternativa_correta,g.explicacao,a.codigo FROM gabarito g JOIN alternativa a ON a.id_alternativa=g.id_alternativa_correta WHERE g.id_questao=$1',[questionId])).rows[0];
+    const answer=(await db.query('SELECT g.id_alternativa_correta,a.codigo FROM gabarito g JOIN alternativa a ON a.id_alternativa=g.id_alternativa_correta WHERE g.id_questao=$1',[questionId])).rows[0];
     if (!answer) throw new HttpError(409,'Questão sem gabarito.');
     const correct=String(answer.id_alternativa_correta)===String(optionId);
     const saved=(await db.query('INSERT INTO resposta(id_usuario,id_questao,id_alternativa,acertou) VALUES ($1,$2,$3,$4) RETURNING id_resposta,acertou,respondida_em',[userId,questionId,optionId,correct])).rows[0];
-    return { ...saved,gabarito:answer.codigo,explicacao:answer.explicacao };
+    return { ...saved,gabarito:answer.codigo };
   });
 }

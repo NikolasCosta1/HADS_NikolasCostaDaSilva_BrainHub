@@ -4,6 +4,7 @@ import RegisterPage from '../pages/auth/RegisterPage.jsx';
 import QuestoesPage from '../pages/aluno/QuestoesPage.jsx';
 import QuestaoPage from '../pages/aluno/QuestaoPage.jsx';
 import DesempenhoPage from '../pages/aluno/DesempenhoPage.jsx';
+import AnotacoesPage from '../pages/aluno/AnotacoesPage.jsx';
 import SessoesEstudoPage from '../pages/aluno/SessoesEstudoPage.jsx';
 import AlunoLayout from '../components/layout/AlunoLayout.jsx';
 import AdminLayout from '../components/layout/AdminLayout.jsx';
@@ -42,6 +43,7 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="questoes" replace />} />
         <Route path="questoes" element={<QuestoesPage />} />
         <Route path="questoes/:id" element={<QuestaoPage />} />
+        <Route path="anotacoes" element={<AnotacoesPage />} />
         <Route path="desempenho" element={<DesempenhoPage />} />
         <Route path="sessoes" element={<SessoesEstudoPage />} />
       </Route>

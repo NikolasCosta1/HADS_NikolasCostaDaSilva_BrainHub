@@ -5,8 +5,8 @@ import { listCatalog,saveCatalog } from '../services/disciplinas/catalogoService
 import * as questions from '../controllers/questoes/questaoController.js';
 import { importQuestions, searchQuestions, listQuestApiSubjects, listQuestApiTopics, listQuestApiBanks, listQuestApiYears } from '../services/questoes/questApiService.js';
 import { getPerformanceByTopic } from '../services/relatorios/desempenhoService.js';
-import { getGeneralReport } from '../services/relatorios/relatorioGeralService.js';
 import * as comments from '../controllers/questoes/comentarioController.js';
+import * as notebook from '../services/questoes/cadernoService.js';
 const router=Router();
 router.get('/health',(_req,res)=>res.json({ status:'ok',service:'brainhub-backend' }));
 router.post('/auth/login',async(req,res)=>res.json(await login(req.body,req.ip)));
@@ -14,13 +14,17 @@ router.post('/auth/register',async(req,res)=>res.status(201).json(await register
 router.use(authenticate);
 router.get('/me',(req,res)=>res.json(req.user));
 router.get('/relatorios/desempenho-assuntos',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await getPerformanceByTopic(req.user.id_usuario,req.query)));
+router.get('/caderno',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json({ items: await notebook.listNotebook(req.user.id_usuario) }));
+router.get('/caderno/erradas',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json({ items: await notebook.listWrongNotInNotebook(req.user.id_usuario) }));
+router.post('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.status(201).json(await notebook.addNotebookQuestion(req.params.id_questao,req.body,req.user.id_usuario)));
+router.put('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await notebook.updateNotebookNote(req.params.id_questao,req.body,req.user.id_usuario)));
+router.delete('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await notebook.removeNotebookQuestion(req.params.id_questao,req.user.id_usuario)));
 for (const [path,kind] of [['disciplinas','disciplina'],['assuntos','assunto']]) {
   router.get(`/${path}`,async(req,res)=>res.json(await listCatalog(kind,req.query,false)));
   router.get(`/admin/${path}`,requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await listCatalog(kind,req.query,true)));
   router.post(`/admin/${path}`,requireRole('ADMINISTRADOR'),async(req,res)=>res.status(201).json(await saveCatalog(kind,req.body)));
   router.put(`/admin/${path}/:id`,requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await saveCatalog(kind,req.body,req.params.id)));
 }
-router.get('/admin/relatorios/geral',requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await getGeneralReport(req.query)));
 router.post('/admin/usuarios',requireRole('ADMINISTRADOR'),async(req,res)=>res.status(201).json(await createUser(req.body)));
 router.get('/admin/questoes',requireRole('ADMINISTRADOR'),questions.listAdmin);
 router.get('/admin/questoes/quest-api/filtros/materias',requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await listQuestApiSubjects(req.query)));
@@ -37,7 +41,6 @@ router.get('/questoes/:id/comentarios',comments.list);
 router.post('/questoes/:id/comentarios',comments.create);
 router.put('/questoes/:id/comentarios/:id_comentario',comments.update);
 router.delete('/questoes/:id/comentarios/:id_comentario',comments.remove);
-router.get('/questoes/filtros',questions.filterOptions);
 router.get('/questoes',questions.listAluno);
 router.get('/questoes/:id',questions.getAluno);
 router.post('/questoes/:id/respostas',requireRole(['ALUNO','ADMINISTRADOR']),questions.answer);

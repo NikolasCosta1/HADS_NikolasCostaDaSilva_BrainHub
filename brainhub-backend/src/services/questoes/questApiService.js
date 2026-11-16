@@ -1,7 +1,6 @@
 import { env } from '../../config/env.js';
 import { pool, transaction } from '../../config/database.js';
 import { HttpError } from '../../utils/HttpError.js';
-import sanitizeHtml from 'sanitize-html';
 
 const FILTERS = ['banca','ano','materia','assunto','dificuldade','tipo','anulada','area','carreira','nivel_escolaridade','uf','esfera','orgao','cargo','codigo','tem_gabarito','tem_anexos'];
 
@@ -84,21 +83,12 @@ async function fetchQuestions(input) {
   return payload.data;
 }
 
-// Mesma lista de tags do front (HtmlSanitizado.jsx): o HTML da Quest API é limpo ao importar e de novo ao exibir.
-const CLEAN_OPTIONS = {
-  allowedTags: ['p', 'br', 'b', 'strong', 'i', 'em', 'u', 'sub', 'sup', 'ul', 'ol', 'li', 'span', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img'],
-  allowedAttributes: { img: ['src', 'alt', 'width', 'height'] },
-  allowedSchemes: ['http', 'https'],
-  disallowedTagsMode: 'discard'
-};
-const clean = value => sanitizeHtml(String(value ?? ''), CLEAN_OPTIONS);
-
 function normalize(item) {
   const provas = Array.isArray(item.provas) ? item.provas : [];
   const prova = provas[0] || {};
   const alternativas = Array.isArray(item.alternativas) ? item.alternativas
     .filter(a => a?.letra && typeof a.texto === 'string')
-    .map(a => ({ codigo: String(a.letra).trim().toUpperCase(), texto: clean(a.texto) })) : [];
+    .map(a => ({ codigo: String(a.letra).trim().toUpperCase(), texto: a.texto })) : [];
   const gabarito = typeof item.gabarito === 'string' ? item.gabarito.trim().toUpperCase() : '';
   const classification = item.classificacao || {};
   const subject = String(classification.materia || 'Questões importadas').trim();
@@ -107,7 +97,7 @@ function normalize(item) {
   const type = /certo|errado/i.test(rawType) || alternativas.length === 2 && alternativas.some(a => ['C','E'].includes(a.codigo)) ? 'CERTO_ERRADO' : 'MULTIPLA_ESCOLHA';
   if (!item.id || !item.enunciado || alternativas.length < 2) return null;
   return {
-    externalId: String(item.id), enunciado: clean(item.enunciado), alternativas, gabarito,
+    externalId: String(item.id), enunciado: item.enunciado, alternativas, gabarito,
     tipo: type, materia: subject, assunto: topic,
     metadata: { numero: item.numero ?? null, tipo: item.tipo ?? null, dificuldade: item.dificuldade ?? null,
       anulada: item.anulada ?? false, provas, areas: item.areas || [], carreiras: item.carreiras || [],
@@ -125,7 +115,6 @@ async function saveQuestion(db, question) {
   const answer = question.alternativas.some(a => a.codigo === question.gabarito) ? question.gabarito : null;
   const { rows: existing } = await db.query("SELECT id_questao FROM questao WHERE fonte='QUEST_API' AND codigo_externo=$1 FOR UPDATE", [question.externalId]);
   let idQuestion;
-  let keptExplanation = null;
   if (!existing[0]) {
     const created = await db.query(`INSERT INTO questao(id_assunto,id_administrador,enunciado,tipo,ativa,fonte,codigo_externo,metadados_fonte)
       VALUES ($1,$2,$3,$4,TRUE,'QUEST_API',$5,$6) RETURNING id_questao`,
@@ -138,10 +127,9 @@ async function saveQuestion(db, question) {
       await db.query('UPDATE questao SET metadados_fonte=$2 WHERE id_questao=$1', [idQuestion, question.metadata]);
       return { id_questao: idQuestion, atualizado: false, ignorada: true };
     }
-    keptExplanation = (await db.query('SELECT explicacao FROM gabarito WHERE id_questao=$1', [idQuestion])).rows[0]?.explicacao ?? null;
     await db.query('DELETE FROM gabarito WHERE id_questao=$1', [idQuestion]);
     await db.query('DELETE FROM alternativa WHERE id_questao=$1', [idQuestion]);
-    await db.query(`UPDATE questao SET id_assunto=$2,enunciado=$3,tipo=$4,metadados_fonte=$5 WHERE id_questao=$1`,
+    await db.query(`UPDATE questao SET id_assunto=$2,enunciado=$3,tipo=$4,ativa=TRUE,metadados_fonte=$5 WHERE id_questao=$1`,
       [idQuestion, subjectRows[0].id_assunto, question.enunciado, question.tipo, question.metadata]);
   }
   const optionIds = new Map();
@@ -149,7 +137,7 @@ async function saveQuestion(db, question) {
     const inserted = await db.query('INSERT INTO alternativa(id_questao,codigo,texto) VALUES ($1,$2,$3) RETURNING id_alternativa', [idQuestion, option.codigo, option.texto]);
     optionIds.set(option.codigo, inserted.rows[0].id_alternativa);
   }
-  if (answer) await db.query('INSERT INTO gabarito(id_questao,id_alternativa_correta,explicacao) VALUES ($1,$2,$3)', [idQuestion, optionIds.get(answer), keptExplanation]);
+  if (answer) await db.query('INSERT INTO gabarito(id_questao,id_alternativa_correta) VALUES ($1,$2)', [idQuestion, optionIds.get(answer)]);
   return { id_questao: idQuestion, atualizado: Boolean(existing[0]), ignorada: false };
 }
 

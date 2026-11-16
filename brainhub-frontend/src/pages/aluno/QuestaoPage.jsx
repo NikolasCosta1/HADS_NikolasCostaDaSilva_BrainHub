@@ -4,6 +4,7 @@ import AlternativaOpcao from '../../components/questoes/AlternativaOpcao.jsx';
 import ResultadoQuestao from '../../components/questoes/ResultadoQuestao.jsx';
 import OrigemQuestao from '../../components/questoes/OrigemQuestao.jsx';
 import Comentarios from '../../components/questoes/Comentarios.jsx';
+import AnotacaoErro from '../../components/anotacoes/AnotacaoErro.jsx';
 import HtmlSanitizado from '../../components/common/HtmlSanitizado.jsx';
 import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import { buscarQuestao, responderQuestao } from '../../services/questoes/questoesService.js';
@@ -66,6 +67,8 @@ export default function QuestaoPage() {
     return 'neutro';
   }
 
+  const errou = !!resultado && !resultado.acertou;
+
   if (carregando) return <TelaCarregando texto="Carregando questão…" />;
 
   if (erroCarregamento || !questao) {
@@ -114,7 +117,10 @@ export default function QuestaoPage() {
 
       {resultado && <ResultadoQuestao resultado={resultado} />}
 
-      <Comentarios idQuestao={questao.id_questao} comentarios={questao.comentarios || []} onMudar={recarregarComentarios} />
+      <div className={`questao-complementos ${errou ? 'questao-complementos--duas' : ''}`}>
+        {errou && <AnotacaoErro idQuestao={questao.id_questao} idResposta={resultado.id_resposta} />}
+        <Comentarios idQuestao={questao.id_questao} comentarios={questao.comentarios || []} onMudar={recarregarComentarios} />
+      </div>
 
       <Link to={voltarPara} className="link-voltar">← Voltar para a lista</Link>
     </article>

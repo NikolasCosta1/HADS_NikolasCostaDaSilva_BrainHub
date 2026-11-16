@@ -1,6 +1,5 @@
 import * as service from '../../services/questoes/questaoService.js';
 export const listAdmin=async(req,res)=>res.json(await service.listQuestions(req.query,true));
-export const filterOptions=async(_req,res)=>res.json(await service.listFilterOptions());
 export const listAluno=async(req,res)=>res.json(await service.listQuestions(req.query,false));
 export const getAdmin=async(req,res)=>res.json(await service.findQuestion(req.params.id,true));
 export const getAluno=async(req,res)=>res.json(await service.findQuestion(req.params.id,false));

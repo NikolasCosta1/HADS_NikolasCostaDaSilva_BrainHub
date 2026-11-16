@@ -11,6 +11,5 @@ export function validateQuestion(body) {
   });
   if (new Set(alternativas.map(a => a.codigo)).size !== expected.length || alternativas.some(a => !expected.includes(a.codigo))) throw new HttpError(400, `Códigos obrigatórios: ${expected.join(', ')}.`);
   if (!expected.includes(b.gabarito)) throw new HttpError(400, 'Gabarito deve indicar uma das alternativas.');
-  const explicacao = b.explicacao == null || b.explicacao === '' ? null : text(b.explicacao, 'explicacao', 20000);
-  return { id_assunto: id(b.id_assunto, 'id_assunto'), enunciado: text(b.enunciado, 'enunciado'), tipo: b.tipo, ativa: boolean(b.ativa, true), alternativas, gabarito: b.gabarito, explicacao };
+  return { id_assunto: id(b.id_assunto, 'id_assunto'), enunciado: text(b.enunciado, 'enunciado'), tipo: b.tipo, ativa: boolean(b.ativa, true), alternativas, gabarito: b.gabarito };
 }
