@@ -6,6 +6,8 @@ import * as questions from '../controllers/questoes/questaoController.js';
 import { importQuestions, searchQuestions, listQuestApiSubjects, listQuestApiTopics, listQuestApiBanks, listQuestApiYears } from '../services/questoes/questApiService.js';
 import { getPerformanceByTopic } from '../services/relatorios/desempenhoService.js';
 import * as comments from '../controllers/questoes/comentarioController.js';
+import { getGeneralReport } from '../services/relatorios/relatorioGeralService.js';
+import * as sessions from '../services/sessoes/sessaoService.js';
 import * as notebook from '../services/questoes/cadernoService.js';
 const router=Router();
 router.get('/health',(_req,res)=>res.json({ status:'ok',service:'brainhub-backend' }));
@@ -19,6 +21,11 @@ router.get('/caderno/erradas',requireRole(['ALUNO','ADMINISTRADOR']),async(req,r
 router.post('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.status(201).json(await notebook.addNotebookQuestion(req.params.id_questao,req.body,req.user.id_usuario)));
 router.put('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await notebook.updateNotebookNote(req.params.id_questao,req.body,req.user.id_usuario)));
 router.delete('/caderno/:id_questao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await notebook.removeNotebookQuestion(req.params.id_questao,req.user.id_usuario)));
+router.get('/sessoes',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json({ items: await sessions.listSessions(req.user.id_usuario) }));
+router.post('/sessoes',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.status(201).json(await sessions.createSession(req.body,req.user.id_usuario)));
+router.put('/sessoes/:id_sessao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await sessions.updateSession(req.params.id_sessao,req.body,req.user.id_usuario)));
+router.delete('/sessoes/:id_sessao',requireRole(['ALUNO','ADMINISTRADOR']),async(req,res)=>res.json(await sessions.deleteSession(req.params.id_sessao,req.user.id_usuario)));
+router.get('/admin/relatorios/geral',requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await getGeneralReport(req.query)));
 for (const [path,kind] of [['disciplinas','disciplina'],['assuntos','assunto']]) {
   router.get(`/${path}`,async(req,res)=>res.json(await listCatalog(kind,req.query,false)));
   router.get(`/admin/${path}`,requireRole('ADMINISTRADOR'),async(req,res)=>res.json(await listCatalog(kind,req.query,true)));

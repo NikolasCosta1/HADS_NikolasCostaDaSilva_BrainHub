@@ -3,8 +3,8 @@ import { useState } from 'react';
 const SESSAO_VAZIA = { titulo: '', assunto: '', data: '', duracaoMinutos: '', anotacoes: '' };
 
 export default function SessaoForm({ sessaoInicial, onSalvar, onCancelar }) {
-  const [valores, setValores] = useState(() => ({ ...SESSAO_VAZIA, ...sessaoInicial }));
-  const [materiais, setMateriais] = useState(() => sessaoInicial?.materiais || []);
+  const [valores, setValores] = useState(() => ({ ...SESSAO_VAZIA, ...sessaoInicial, assunto: sessaoInicial?.assunto ?? '', anotacoes: sessaoInicial?.anotacoes ?? '', duracaoMinutos: sessaoInicial?.duracaoMinutos ?? '' }));
+  const [materiais, setMateriais] = useState(() => (sessaoInicial?.materiais || []).map((m, i) => ({ id: `m${i}`, titulo: m.titulo || '', link: m.link || '' })));
   const [erro, setErro] = useState('');
 
   const alterar = (e) => setValores(v => ({ ...v, [e.target.name]: e.target.value }));

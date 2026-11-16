@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
+import TelaCarregando from '../../components/common/TelaCarregando.jsx';
 import SessaoForm from '../../components/sessoes/SessaoForm.jsx';
-import { listarSessoes, salvarSessao, removerSessao } from '../../services/sessoes/sessoesMockService.js';
+import { listarSessoes, criarSessao, atualizarSessao, removerSessao } from '../../services/sessoes/sessoesService.js';
+import { mensagemErroQuestao } from '../../utils/mensagensQuestoes.js';
 
 function formatarData(data) {
   if (!data) return '';
@@ -10,10 +12,19 @@ function formatarData(data) {
 
 export default function SessoesEstudoPage() {
   const [sessoes, setSessoes] = useState([]);
-  const [editando, setEditando] = useState(null); // null = fechado, {} = nova, objeto = edição
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+  const [editando, setEditando] = useState(null); // null = nova, objeto = edição
   const [mostrarForm, setMostrarForm] = useState(false);
 
-  useEffect(() => { setSessoes(listarSessoes()); }, []);
+  useEffect(() => {
+    let ativo = true;
+    listarSessoes()
+      .then(lista => { if (ativo) setSessoes(lista); })
+      .catch(err => { if (ativo) setErro(mensagemErroQuestao(err)); })
+      .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, []);
 
   function abrirNova() {
     setEditando(null);
@@ -23,14 +34,31 @@ export default function SessoesEstudoPage() {
     setEditando(sessao);
     setMostrarForm(true);
   }
-  function salvar(dados) {
-    setSessoes(salvarSessao(dados, editando?.id));
-    setMostrarForm(false);
-    setEditando(null);
+  async function salvar(dados) {
+    setErro('');
+    try {
+      if (editando) {
+        const salva = await atualizarSessao(editando.id_sessao, dados);
+        setSessoes(l => l.map(s => (s.id_sessao === salva.id_sessao ? salva : s)));
+      } else {
+        const salva = await criarSessao(dados);
+        setSessoes(l => [salva, ...l].sort((a, b) => (b.data || '').localeCompare(a.data || '')));
+      }
+      setMostrarForm(false);
+      setEditando(null);
+    } catch (err) {
+      setErro(mensagemErroQuestao(err));
+    }
   }
-  function remover(id) {
+  async function remover(id) {
     if (!window.confirm('Remover esta sessão de estudo?')) return;
-    setSessoes(removerSessao(id));
+    setErro('');
+    try {
+      await removerSessao(id);
+      setSessoes(l => l.filter(s => s.id_sessao !== id));
+    } catch (err) {
+      setErro(mensagemErroQuestao(err));
+    }
   }
 
   return (
@@ -40,9 +68,7 @@ export default function SessoesEstudoPage() {
         <p>Registre o que você estudou, por quanto tempo e os materiais usados.</p>
       </div>
 
-      <div className="alert alert-info" role="status">
-        Esta tela ainda não está conectada ao servidor: os dados ficam salvos só neste navegador.
-      </div>
+      {erro && <div className="alert" role="alert">{erro}</div>}
 
       {!mostrarForm && (
         <div className="acoes">
@@ -56,12 +82,14 @@ export default function SessoesEstudoPage() {
         </div>
       )}
 
-      {sessoes.length === 0 ? (
+      {carregando ? (
+        <TelaCarregando texto="Carregando sessões…" />
+      ) : sessoes.length === 0 ? (
         <div className="vazio">Nenhuma sessão registrada ainda.</div>
       ) : (
         <ul className="lista-sessoes">
           {sessoes.map(s => (
-            <li key={s.id} className="card-sessao">
+            <li key={s.id_sessao} className="card-sessao">
               <div className="card-sessao-cabecalho">
                 <div>
                   <h3>{s.titulo}</h3>
@@ -73,7 +101,7 @@ export default function SessoesEstudoPage() {
                 </div>
                 <div className="comentario-acoes">
                   <button type="button" className="btn-link" onClick={() => abrirEdicao(s)}>Editar</button>
-                  <button type="button" className="btn-link btn-link-danger" onClick={() => remover(s.id)}>Remover</button>
+                  <button type="button" className="btn-link btn-link-danger" onClick={() => remover(s.id_sessao)}>Remover</button>
                 </div>
               </div>
 
