@@ -1,4 +1,3 @@
-
 Backend em Node.js + Express + PostgreSQL
 
 ## Banco de questões: Quest API
@@ -36,4 +35,4 @@ Para bancos já criados, aplique `npm run db:migrate:comments` uma vez para cria
 - Cadastro público de contas de aluno pela rota `POST /api/auth/register`; o perfil é sempre `ALUNO`.
 - Respostas de questões podem ser registradas por ALUNO e ADMINISTRADOR; cada resposta fica vinculada à conta autenticada.
 - Relatório autenticado por assunto em `GET /api/relatorios/desempenho-assuntos`, com total de respostas, acertos, erros e aproveitamento do usuário conectado.
-- Comentários autenticados por questão em `GET/POST /api/questoes/:id/comentarios`; autores podem editar e remover os próprios comentários.
+- Comentários autenticados por questão em `GET/POST /api/questoes/:id/comentarios`;
